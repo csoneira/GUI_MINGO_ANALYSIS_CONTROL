@@ -6,9 +6,10 @@ TEMPLATE_FILE="$SCRIPT_DIR/mingo-gui.desktop.in"
 LAUNCHER_FILE="$SCRIPT_DIR/launch_mingo_gui.sh"
 LOGO_FILE="$SCRIPT_DIR/logo_mingo_analysis.png"
 APPS_DIR="$HOME/.local/share/applications"
-APP_FILE="$APPS_DIR/mingo-gui.desktop"
+APP_FILE="$APPS_DIR/mingo-analysis-control.desktop"
+LEGACY_APP_FILE="$APPS_DIR/mingo-gui.desktop"
 DESKTOP_DIR="$HOME/Desktop"
-ICON_NAME="mingo-gui"
+ICON_NAME="mingo-analysis-control"
 ICON_DIR="$HOME/.local/share/icons/hicolor/256x256/apps"
 ICON_FILE="$ICON_DIR/$ICON_NAME.png"
 
@@ -32,6 +33,11 @@ fi
 
 cp "$LOGO_FILE" "$ICON_FILE"
 
+# Remove old generic launcher only if it points to this app's launcher script.
+if [[ -f "$LEGACY_APP_FILE" ]] && grep -Fq "Exec=$LAUNCHER_FILE" "$LEGACY_APP_FILE"; then
+  rm -f "$LEGACY_APP_FILE"
+fi
+
 ESCAPED_LAUNCHER="${LAUNCHER_FILE//|/\\|}"
 sed \
   -e "s|__LAUNCHER_PATH__|$ESCAPED_LAUNCHER|g" \
@@ -42,12 +48,12 @@ chmod +x "$LAUNCHER_FILE"
 chmod +x "$APP_FILE"
 
 if [[ -d "$DESKTOP_DIR" ]]; then
-  cp "$APP_FILE" "$DESKTOP_DIR/mingo-gui.desktop"
-  chmod +x "$DESKTOP_DIR/mingo-gui.desktop"
+  cp "$APP_FILE" "$DESKTOP_DIR/mingo-analysis-control.desktop"
+  chmod +x "$DESKTOP_DIR/mingo-analysis-control.desktop"
 fi
 
 echo "Installed launcher: $APP_FILE"
 echo "Installed icon: $ICON_FILE"
 if [[ -d "$DESKTOP_DIR" ]]; then
-  echo "Copied launcher to desktop: $DESKTOP_DIR/mingo-gui.desktop"
+  echo "Copied launcher to desktop: $DESKTOP_DIR/mingo-analysis-control.desktop"
 fi
